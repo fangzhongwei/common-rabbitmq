@@ -4,14 +4,30 @@ import java.util.concurrent.Executors
 import javax.inject.Inject
 
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory, MessageProperties}
+import org.slf4j.LoggerFactory
 
 /**
   * Created by fangzhongwei on 2016/10/22.
   */
-class RabbitmqProducerTemplate @Inject()(host: String) {
+
+trait RabbitmqProducerTemplate {
+  def connect(): Unit
+
+  def send(exchange: String, exchangeType: String, queue: String, routingKey: String, dataByte: Array[Byte]): Unit
+
+  def send2Multiple(exchange: String, exchangeType: String, queues: Array[String], routingKeys: Array[String], dataByte: Array[Byte]): Unit
+
+  def close: Unit
+}
+
+class RabbitmqProducerTemplateImpl @Inject()(host: String, port: Int, username: String, password: String, virtualHost: String, threadPollSize: Int) extends RabbitmqProducerTemplate {
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   var conn: Connection = _
 
-  def connect(host: String, port: Int, username: String, password: String, virtualHost: String, threadPollSize: Int): Unit = {
+  def apply(host: String, port: Int, username: String, password: String, virtualHost: String, threadPollSize: Int): RabbitmqProducerTemplateImpl = new RabbitmqProducerTemplateImpl(host, port, username, password, virtualHost, threadPollSize)
+
+  override def connect(): Unit = {
     val factory: ConnectionFactory = new ConnectionFactory()
     factory.setHost(host)
     factory.setPort(port)
@@ -22,7 +38,7 @@ class RabbitmqProducerTemplate @Inject()(host: String) {
     conn = factory.newConnection()
   }
 
-  def send(exchange: String, exchangeType: String, queue: String, routingKey: String, dataByte: Array[Byte]): Unit = {
+  override def send(exchange: String, exchangeType: String, queue: String, routingKey: String, dataByte: Array[Byte]): Unit = {
     var channel: Channel = null
     try {
       channel = conn.createChannel()
@@ -35,7 +51,7 @@ class RabbitmqProducerTemplate @Inject()(host: String) {
     }
   }
 
-  def send2Multiple(exchange: String, exchangeType: String, queues: Array[String], routingKeys: Array[String], dataByte: Array[Byte]): Unit = {
+  override def send2Multiple(exchange: String, exchangeType: String, queues: Array[String], routingKeys: Array[String], dataByte: Array[Byte]): Unit = {
     var channel: Channel = null
     try {
       channel = conn.createChannel()
@@ -50,7 +66,7 @@ class RabbitmqProducerTemplate @Inject()(host: String) {
     }
   }
 
-  def close: Unit = {
+  override def close: Unit = {
     conn.close()
   }
 }
