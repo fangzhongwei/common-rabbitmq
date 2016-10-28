@@ -50,7 +50,7 @@ class RabbitmqConsumerTemplateImpl(host: String, port: Int, username: String, pa
           handle(message)
         }
       }
-    })
+    }).start()
   }
 
   override def close: Unit = {
