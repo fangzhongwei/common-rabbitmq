@@ -2,10 +2,9 @@ name := "common-rabbitmq"
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.0-RC2"
 
 organization := "com.lawsofnature.common"
-
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"
