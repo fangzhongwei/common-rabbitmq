@@ -42,19 +42,17 @@ class RabbitmqConsumerTemplateImpl @Inject()(@Named("rabbitmq.host") host: Strin
   }
 
   override def startConsume(queue: String, handle: String => Boolean): Unit = {
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        val channel: Channel = conn.createChannel()
-        channel.queueDeclare(queue, false, false, false, null)
-        val consumer: QueueingConsumer = new QueueingConsumer(channel)
-        channel.basicConsume(queue, true, consumer)
-        logger.info(" [*] Waiting for messages.")
-        while (true) {
-          val delivery: QueueingConsumer.Delivery = consumer.nextDelivery()
-          val message: String = new String(delivery.getBody())
-          logger.info(new StringBuilder("receive message:").append(message).toString())
-          handle(message)
-        }
+    new Thread(() => {
+      val channel: Channel = conn.createChannel()
+      channel.queueDeclare(queue, false, false, false, null)
+      val consumer: QueueingConsumer = new QueueingConsumer(channel)
+      channel.basicConsume(queue, true, consumer)
+      logger.info(" [*] Waiting for messages.")
+      while (true) {
+        val delivery: QueueingConsumer.Delivery = consumer.nextDelivery()
+        val message: String = new String(delivery.getBody())
+        logger.info(new StringBuilder("receive message:").append(message).toString())
+        handle(message)
       }
     }).start()
   }
