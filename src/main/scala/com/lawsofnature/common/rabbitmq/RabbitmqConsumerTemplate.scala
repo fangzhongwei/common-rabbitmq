@@ -3,6 +3,7 @@ package com.lawsofnature.common.rabbitmq
 import java.util.concurrent.Executors
 import javax.inject.{Inject, Named}
 
+import com.lawsofnature.common.service.ConsumeService
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory, QueueingConsumer}
 import org.slf4j.LoggerFactory
 
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory
 trait RabbitmqConsumerTemplate {
   def connect(): Unit
 
-  def startConsume(queue: String, handle: String => Boolean): Unit
+  def startConsume(queue: String, consumeService: ConsumeService): Unit
 
   def close: Unit
 }
@@ -41,7 +42,7 @@ class RabbitmqConsumerTemplateImpl @Inject()(@Named("rabbitmq.host") host: Strin
     conn = factory.newConnection()
   }
 
-  override def startConsume(queue: String, handle: String => Boolean): Unit = {
+  override def startConsume(queue: String, consumeService: ConsumeService): Unit = {
     new Thread(() => {
       val channel: Channel = conn.createChannel()
       channel.queueDeclare(queue, false, false, false, null)
@@ -52,7 +53,7 @@ class RabbitmqConsumerTemplateImpl @Inject()(@Named("rabbitmq.host") host: Strin
         val delivery: QueueingConsumer.Delivery = consumer.nextDelivery()
         val message: String = new String(delivery.getBody())
         logger.info(new StringBuilder("receive message:").append(message).toString())
-        handle(message)
+        consumeService.consume(message)
       }
     }).start()
   }
