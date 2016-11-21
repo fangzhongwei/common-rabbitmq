@@ -1,7 +1,7 @@
 package com.lawsofnature.common.rabbitmq
 
 import java.util.concurrent.Executors
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory, MessageProperties}
 import org.slf4j.LoggerFactory
@@ -20,7 +20,12 @@ trait RabbitmqProducerTemplate {
   def close: Unit
 }
 
-class RabbitmqProducerTemplateImpl @Inject()(host: String, port: Int, username: String, password: String, virtualHost: String, threadPollSize: Int) extends RabbitmqProducerTemplate {
+class RabbitmqProducerTemplateImpl @Inject()(@Named("rabbitmq.host") host: String,
+                                             @Named("rabbitmq.port") port: Int,
+                                             @Named("rabbitmq.username") username: String,
+                                             @Named("rabbitmq.password") password: String,
+                                             @Named("rabbitmq.virtualHost") virtualHost: String,
+                                             @Named("rabbitmq.threadPollSize") threadPollSize: Int) extends RabbitmqProducerTemplate {
   val logger = LoggerFactory.getLogger(this.getClass)
 
   var conn: Connection = _
