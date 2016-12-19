@@ -51,9 +51,8 @@ class RabbitmqConsumerTemplateImpl @Inject()(@Named("rabbitmq.host") host: Strin
       logger.info(" [*] Waiting for messages.")
       while (true) {
         val delivery: QueueingConsumer.Delivery = consumer.nextDelivery()
-        val message: String = new String(delivery.getBody())
-        logger.info(new StringBuilder("receive message:").append(message).toString())
-        consumeService.consume(message)
+        logger.info("receive message...")
+        consumeService.consume(delivery.getBody)
       }
     }).start()
   }
