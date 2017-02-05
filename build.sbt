@@ -4,7 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-organization := "com.lawsofnature.common"
+organization := "com.jxjxgo.common"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"

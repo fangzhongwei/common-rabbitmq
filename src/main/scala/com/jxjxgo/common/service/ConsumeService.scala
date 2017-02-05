@@ -1,4 +1,4 @@
-package com.lawsofnature.common.service
+package com.jxjxgo.common.service
 
 import scala.concurrent.Future
 

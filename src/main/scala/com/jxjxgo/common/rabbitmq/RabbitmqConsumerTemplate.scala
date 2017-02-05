@@ -1,9 +1,9 @@
-package com.lawsofnature.common.rabbitmq
+package com.jxjxgo.common.rabbitmq
 
 import java.util.concurrent.Executors
 import javax.inject.{Inject, Named}
 
-import com.lawsofnature.common.service.ConsumeService
+import com.jxjxgo.common.service.ConsumeService
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory, QueueingConsumer}
 import org.slf4j.LoggerFactory
 

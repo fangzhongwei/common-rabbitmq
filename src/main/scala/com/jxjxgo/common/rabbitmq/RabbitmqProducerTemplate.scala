@@ -1,4 +1,4 @@
-package com.lawsofnature.common.rabbitmq
+package com.jxjxgo.common.rabbitmq
 
 import java.util.concurrent.Executors
 import javax.inject.{Inject, Named}
